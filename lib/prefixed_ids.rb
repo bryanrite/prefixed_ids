@@ -57,11 +57,11 @@ module PrefixedIds
 
     class_methods do
       def find_by_prefix_id(id)
-        find_by(id: _prefix_id.decode(id))
+        find_by(id: safe_decode_prefix_id(id))
       end
 
       def find_by_prefix_id!(id)
-        find_by!(id: _prefix_id.decode(id))
+        find_by!(id: safe_decode_prefix_id(id))
       end
 
       def prefix_id(id)
@@ -70,6 +70,12 @@ module PrefixedIds
 
       def prefix_ids(ids)
         ids.map { |id| prefix_id(id) }
+      end
+
+      def safe_decode_prefix_id(id)
+        decode_prefix_id(id)
+      rescue Hashids::InputError
+        nil
       end
 
       def decode_prefix_id(id)
